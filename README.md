@@ -25,35 +25,34 @@ Fill or provide environment variables in `z_deps_scan/.env`
 Make sure to install all necessary python package.
 
 On project root directory launch:
-`python manage.py createsuperuser`
+```python manage.py createsuperuser```
 
 To create/update database:
-`./manage.py makemigrations`
-`./manage.py migrate`
+```./manage.py migrate```
 
 Launch with:
-`./manage.py runserver`
+```./manage.py runserver```
 
 ### With Docker
 
 Fill `Docker.env` file.
 
 Build Image, run it and create admin user
-`
+```
 	docker build -t z_deps_scan .
     docker run -d -p 8000:8000 --name z_deps_scan z_deps_scan:latest
     docker exec -it z_deps_scan /bin/bash
     python manage.py createsuperuser
-`
+```
 
 #### Some useful docker commands
-`
+```
 docker ps -a
 docker logs z_deps_scan
 docker rm -f z_deps_scan
 docker exec -it z_deps_scan /bin/bash
 docker exec -it z_deps_scan python manage.py shell
-`
+```
 
 ## How to use
 
