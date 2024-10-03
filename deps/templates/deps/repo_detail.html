@@ -1,0 +1,9 @@
+{% extends 'deps/base.html' %}
+{% block title %}Repo detail{% endblock %}
+
+{% block content %}
+<h1>{{ repo.name }}</h1>
+<ul>
+    <li>{{ repo.uri }}</li>
+</ul>
+{% endblock %}

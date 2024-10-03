@@ -1,0 +1,197 @@
+#generalLog {
+    position: absolute; /* Ensure the div is positioned relative to its nearest positioned ancestor */
+    top: 0;             /* Align to the top */
+    right: 0;           /* Align to the right */
+    margin: 10px;       /* Add some margin to avoid sticking to the edges (optional) */
+    z-index: 1000;      /* Ensure it appears above other elements (optional) */
+}
+
+#error {
+    background-color: #f8d7da; /* Light red background */
+    color: #721c24; /* Dark red text */
+    border: 1px solid #f5c6cb; /* Red border */
+    padding: 10px 20px; /* Padding around the text */
+    border-radius: 5px; /* Rounded corners */
+    font-family: Arial, sans-serif; /* Font family */
+    font-size: 16px; /* Font size */
+    margin: 20px 0; /* Margin above and below */
+    display: inline-block; /* Inline-block to fit content */
+    width: 100%; /* Full width of the container */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+#error::before {
+    content: "⚠ "; /* Warning icon */
+    font-size: 18px; /* Adjust icon size */
+    margin-right: 10px; /* Space between icon and text */
+}
+
+/* Hide the element if it is empty */
+#error:empty {
+    display: none;
+}
+
+#legend {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 1000;
+}
+#toggleButton {
+    cursor: pointer;
+    margin-bottom: 5px;
+    display: inline-block;
+    padding: 0px 5px;
+    /* background-color: #007bff; */
+    color: white;
+    border: none;
+    border-radius: 1px;
+}
+ul {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+    }
+h1 {
+    background-color: #deffe3;
+    color: #54565a;
+    padding: 0;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+h2 {
+    background-color: #deffe3;
+    color: #54565a;
+    padding: 0;
+    text-align: center;
+}
+
+button {
+   /* border: 1px solid grey; */
+   /* background-color: #e0e0e0; */
+}
+
+button:not([disabled]):hover {
+   /* background-color: #5fbf68; /* Darker green */
+    color: #000; /* Change text color to black */
+    transform: scale(1.08); /* Slightly enlarge the button */
+    cursor: pointer;
+}
+
+button:disabled {
+  background-color: #6c757d;
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+button > img, a > img {
+    height: 20px;
+    width: 20px;
+    vertical-align: middle;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg)
+    }
+    to {
+        transform: rotate(360deg)
+    }
+}
+
+.button-start > img {
+    animation-name: rotate;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-play-state: running;
+}
+
+.button-end > img {
+    animation-play-state: paused !important;
+}
+
+
+a {
+    text-decoration: none;
+}
+
+/* CSS to style link as button
+.button-link {
+    display: inline-block;
+    padding: 1px 1px;
+    font-size: 16px;
+    color: white;
+    background-color: #e0e0e0;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 0px;
+    border: 1px solid grey;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}*/
+
+.status_none_done {
+    color: gray;
+}
+
+.status_running {
+    color: blue;
+}
+
+.status_ok {
+    color: green;
+}
+
+.status_ko {
+    color: red;
+}
+
+.dataTables_wrapper {
+    width: max-content;
+}
+
+.dataTables_filter {
+    float: left !important;
+}
+
+.dataTables_empty {
+    visibility: hidden;
+    height: 0;
+    font-size: 0;
+}
+
+
+table.dataTable thead > tr > th.sorting::before, table.dataTable thead > tr > th.sorting::after {
+    right: 2px !important;
+}
+
+table.dataTable {
+    width: fit-content !important;
+}
+
+table.dataTable > thead > tr > th {
+    padding: 2px 2px !important;
+}
+
+table.dataTable tbody th, table.dataTable tbody td {
+    padding: 2px 2px !important;
+}
+
+.version_latest{
+    color: green;
+}
+
+.version_highest{
+    color: orange;
+}
+
+.version_lowest{
+    color: red;
+}

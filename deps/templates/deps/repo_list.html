@@ -1,0 +1,104 @@
+{% extends 'deps/base.html' %}
+
+{% load action_forms %}
+{% load custom_filters %}
+{% load static %}
+
+{% block head %}
+<link href="{% static 'datatables.min.css' %}" rel="stylesheet"/>
+<script src="{% static 'datatables.min.js' %}"></script>
+{% endblock %}
+
+{% block title %}Repository List{% endblock %}
+{% block content %}
+{% csrf_token %}
+{% if repoList %}
+<table>
+    <tbody>
+    <tr>
+        <td>for Selected: </td>
+        <td>
+            <button type="button" onclick="submitSelected('/deps/Repo/pull', 'repoIds', '/deps/Repo/list')">
+                pull
+            </button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table id='table_1'>
+    <thead>
+    <tr>
+        <th></th>
+        <th>id</th>
+        <th>name</th>
+        <th>uriType</th>
+        <th>uri</th>
+        <th class="selectColumn">identifierType</th>
+        <th class="selectColumn">identifier</th>
+        <th class="noFilter noSort"></th>
+        <!--        <th>created_dt</th>-->
+        <!--        <th>updated_dt</th>-->
+
+        <!--        <th>pathLocal</th>-->
+        <th class="noFilter noSort"></th>
+        <th>pull start dt</th>
+        <th>pull end dt</th>
+        <th>status</th>
+        <th class="noFilter noSort"></th>
+        <th class="noFilter noSort"></th>
+        <th class="noFilter noSort"></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% autoescape off %}
+    {% for repo in repoList %}
+    <tr>
+        <td><input type="checkbox" name="repoIds" value="{{ repo.id }}"/></td>
+        <td>{{ repo.id }}</td>
+        <!--        <td>{{ repo.created_dt | dtf}}</td>-->
+        <!--        <td>{{ repo.updated_dt | dtf}}</td>-->
+        <td>{{ repo.name }}</td>
+        <td>{{ repo.uri_type }}</td>
+        <td>{{ repo | uri }}</td>
+
+        <td>{% identifierTypeForm repo %}</td>
+        <td>
+            {% if repo.identifier_type  %}
+            {% identifierForm repo %}
+            {% endif %}
+        </td>
+        <td>{% goToGit repo %}</td>
+        <td>
+            {% if repo.identifier_type and repo.identifier %}
+            {% button_post repo 'pull' '/deps/Repo/list' 'pull' repo.pull_status 'git_pull.png' %}
+            {% endif %}
+        </td>
+
+        <!--        <td>{{ repo.path_local }}</td>-->
+        <td>{{ repo.pull_start_dt | dtf}}</td>
+        <td>{{ repo.pull_end_dt | dtf}}</td>
+        <td>{{ repo.pull_status | status | safe }}</td>
+        <td>{% if repo.pull_status != TaskStatus.NONE_DONE %}
+            {% getLog repo 'pull/log' %}
+            {% endif %}</td>
+        <td>{% goToRepoBuildConf repo %}</td>
+        <td>{% button_delete repo 'delete' '/deps/Repo/list' %}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    {% endautoescape %}
+</table>
+{% else %}
+<tr>No repo are available.</tr>
+{% endif %}
+
+<script>
+    window.onload = function() {
+        activateTab('tab_repo');
+        transformToDataTable('table_1');
+        {% if repoFilter %}
+        $('#table_1 input').eq(1).val('{{repoFilter}}').trigger($.Event("keyup", { keyCode: 13 }));
+        {% endif %}
+    };
+</script>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'deps/base.html' %}
+
+{% load action_forms %}
+{% load custom_filters %}
+{% load static %}
+
+{% block head %}
+{% endblock %}
+
+{% block title %}Repo dependencies list{% endblock %}
+{% block content %}
+
+<br>
+Repo: {% goToRepo buildConf.repo %}: {{ repo.name }} ({{ repo.identifier_type }}/{{ repo.identifier }})
+<br>
+Build Conf: {% goToBuildConf buildConf %}: {{ buildConf.filePath }}
+<br><br>
+
+<label for="filterOptions">Filter Options:</label>
+<select id="filterOptions" onchange="applyFilter('table_1')">
+    <option value="ALL">All</option>
+    <option class="version_latest" value="LATEST">Latest version</option>
+    <option class="version_highest" value="HIGHEST">Not latest</option>
+</select>
+
+{% if depList %}
+<table id='table_1'>
+    <thead>
+    <tr>
+        <th></th>
+        <th>group</th>
+        <th>artifact</th>
+<!--        <th>packaging</th>-->
+        <th>classifier</th>
+        <th>version</th>
+        <th>latest version</th>
+        <th>cve(s)</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for dep in depList %}
+    <tr>
+        <td><input type="checkbox" name="depIds" value="{{ dep.id }}"/></td>
+        <td>{{ dep.group }}</td>
+        <td>{% linkToMavenRepoArtifactDep dep %} {{ dep.artifact }}</td>
+<!--        <td>{{ dep.packaging }}</td>-->
+        <td>{{ dep.classifier }}</td>
+        <td>{% linkToMavenRepoVersionDep dep %} <span class="version_{{dep.versionStatus}}">{{ dep.version }}</span></td>
+        <td>{{ dep.latestVersion }}</td>
+        <td>{% for cve in dep.cve_list|dictsortreversed:"cvssScore" %}
+            <a href="{{ cve.reference }}" target="_blank">{{ cve.id }}</a> (<span class="score" data-score="{{ cve.cvssScore }}">{{ cve.cvssScore }}</span>)
+            {% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<script>
+       // Call the function after the template is loaded
+       window.onload = function() {
+           var tabId = 'build_conf_dep_list_{{ buildConf.id }}';
+           addTabTo('tab_build_conf_list', tabId, '{{ buildConf.id }}: {{ buildConf.filePath }} dep list', '/deps/BuildConf/{{ buildConf.id }}/dep_list/view');
+           activateTab(tabId);
+           transformToDataTable('table_1');
+<!--           initLegend();-->
+       };
+        document.addEventListener('DOMContentLoaded', function () {
+        const scoreElements = document.querySelectorAll('.score');
+        scoreElements.forEach(function (scoreElement) {
+            const score = parseFloat(scoreElement.getAttribute('data-score'));
+            const scoreColor = getScoreColor(score);
+            scoreElement.style.color = scoreColor;
+            });
+        });
+</script>
+{% else %}
+<tr>No dependencies are available.</tr>
+{% endif %}
+
+{% endblock %}
+
+

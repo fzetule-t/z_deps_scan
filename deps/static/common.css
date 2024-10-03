@@ -1,0 +1,28 @@
+
+th {
+    overflow-wrap: anywhere;
+}
+
+.odd td {
+    background-color: #deffe3 !important;
+}
+
+.tabs {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+}
+
+.tab {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 5px 5px 0 0;
+    margin-right: 5px;
+}
+
+.active-tab {
+    background-color: #deffe3;
+    color: #54565a;
+}

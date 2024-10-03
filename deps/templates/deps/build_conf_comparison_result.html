@@ -1,0 +1,76 @@
+{% extends 'deps/base.html' %}
+
+{% load action_forms %}
+{% load custom_filters %}
+{% load static %}
+
+{% block head %}
+{% endblock %}
+{% block title %}Dependencies comparisons{% endblock %}
+{% block content %}
+<br>
+Comparison: {{ comparison.id }}:
+    {% comparisonToHtml comparison %}
+<br>
+<br>
+<label for="filterOptions">Filter Options:</label>
+<select id="filterOptions" onchange="applyFilter('table_1')">
+    <option value="ALL">All</option>
+    <option class="version_latest" value="LATEST">Latest version</option>
+    <option class="version_highest" value="HIGHEST">Highest version</option>
+    <option class="version_lowest" value="LOWEST">Lowest version</option>
+</select>
+<table id='table_1'>
+    <thead>
+    <tr>
+        <th></th>
+        <th>group</th>
+        <th>artifact</th>
+<!--        <th>packaging</th>-->
+        <th>classifier</th>
+        {% for title in depListComparisonResult.aaa_title %}
+        <th>{{ title }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for key, values in depListComparisonResult.items %}
+    {% if key != 'aaa_title' %}
+    {% with key|split:":" as keySplit %}
+    <tr>
+        <td><input type="checkbox" name="keys" value="{{ key }}"/></td>
+        <td>{{ keySplit.0 }}</td>
+        <td>{% linkToMavenRepoArtifactSplit keySplit %} {{ keySplit.1 }}</td>
+        <td>{{ keySplit.2 }}</td>
+
+        {% for value in values %}
+        <td>
+            {% for subitem in value %}
+            <span class="version_{{subitem.versionStatus}}">
+                {% linkToMavenRepoVersionSplit keySplit subitem.version %} {{ subitem.version }}
+            </span>
+            {% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </td>
+        {% endfor %}
+    </tr>
+    {% endwith %}
+    {% endif %}
+    {% endfor %}
+    </tbody>
+</table>
+
+<script>
+       // Call the function after the template is loaded
+       window.onload = function() {
+           var tabId = 'build_conf_comparison_{{ comparison.id }}';
+           addTabTo('tab_build_conf_comparison_list', tabId, '{{ comparison.id }}', '/deps/BuildConfComparison/{{ comparison.id }}/result/view');
+           activateTab(tabId);
+           transformToDataTable('table_1');
+<!--           initLegend();-->
+       };
+</script>
+{% endblock %}
+
+
+

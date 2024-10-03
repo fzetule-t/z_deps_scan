@@ -1,0 +1,192 @@
+{% extends 'deps/base.html' %}
+
+{% load action_forms %}
+{% load custom_filters %}
+
+{% block title %}Repository Tree{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery.fancytree@2.38.3/dist/skin-win8/ui.fancytree.min.css">
+
+<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.fancytree@2.38.3/dist/jquery.fancytree-all.min.js"></script>
+
+{% endblock %}
+
+{% block style %}
+<style>
+    /* Optional: Custom styles */
+    .fancytree-custom-icon {
+      width: 16px;
+      height: 16px;
+      background-color: #007bff;
+      display: inline-block;
+      margin-right: 5px;
+    }
+
+    .cve-node {
+        background-color: #f9e2e2;
+    }
+
+    .cve-node .fancytree-icon {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+Repo: {{ repo.name }} ({{ repo.identifier_type }}/{{ repo.identifier }})
+<br>
+Build Conf: {{ buildConf.filePath }}
+<br><br>
+<p>
+    <label>Filter:</label>
+    <input name="search" placeholder="Filter..." data-dashlane-rid="90a0bccb88437e11" data-form-type="other"> <!-- autocomplete='off' -->
+    <button id="btnResetSearch" disabled="disabled" data-dashlane-rid="8479181e323088ed" data-dashlane-label="true" data-form-type="action">×</button>
+    <span id="matches"></span>
+</p>
+<fieldset>
+    <legend>Options</legend>
+    <label for="regex" data-dashlane-label="true">
+        <input type="checkbox" id="regex" data-dashlane-rid="d844b5837e6d0a39" data-form-type="other">
+        Regular expression
+    </label>
+    <label for="hideMode" data-dashlane-label="true">
+        <input type="checkbox" id="hideMode" data-dashlane-rid="e36858f869b48b4b" data-form-type="other" checked="true">
+        Hide unmatched nodes
+    </label>
+    <label for="autoExpand" data-dashlane-label="true" hidden="true">
+        <input type="checkbox" id="autoExpand" checked="checked" data-dashlane-rid="9f16517fbc10f941" data-form-type="other">
+        Auto expand
+    </label>
+    <label for="branchMode" data-dashlane-label="true" hidden="true">
+        <input type="checkbox" id="branchMode" data-dashlane-rid="d0885cee162d34c9" data-form-type="other">
+        Match whole branch
+    </label>
+    <label for="leavesOnly" data-dashlane-label="true" hidden="true">
+        <input type="checkbox" id="leavesOnly" data-dashlane-rid="a07e8babe073659a" data-form-type="other">
+        Match end nodes only
+    </label>
+    <label for="fuzzy" data-dashlane-label="true" hidden="true">
+        <input type="checkbox" id="fuzzy" data-dashlane-rid="a20b523e137af397" data-form-type="other">
+        Fuzzy
+    </label>
+    <label for="hideExpanders" data-dashlane-label="true" hidden="true">
+        <input type="checkbox" id="hideExpanders" data-dashlane-rid="08e805c210ae0e60" data-form-type="other">
+        hideExpanders
+    </label>
+    <label for="highlight" data-dashlane-label="true">
+        <input type="checkbox" id="highlight" checked="checked" data-dashlane-rid="c5939f0e7ea9609d" data-form-type="other">
+        Highlight
+    </label>
+    <label for="nodata" data-dashlane-label="true" hidden="true">
+        <input type="checkbox" id="nodata" checked="checked" data-dashlane-rid="d8c867ded13616b5" data-form-type="other">
+        nodata
+    </label>
+    <label for="counter" data-dashlane-label="true" hidden="true">
+        <input type="checkbox" id="counter" checked="checked" data-dashlane-rid="8ded4d9bd6111151" data-form-type="other">
+        Add counter badges
+    </label>
+    <label for="hideExpandedCounter" data-dashlane-label="true" hidden="true">
+        <input type="checkbox" id="hideExpandedCounter" checked="checked" data-dashlane-rid="fb2059b81bc3d24c" data-form-type="other">
+        hideExpandedCounter
+    </label>
+</fieldset>
+<div id="tree"></div>
+
+{% csrf_token %}
+<script>
+    // Call the function after the template is loaded
+
+    window.onload = function() {
+       var tabId = 'build_conf_dep_tree_{{ buildConf.id }}';
+       addTabTo('tab_build_conf_list', tabId, '{{ buildConf.id }}: {{ buildConf.filePath }} dep tree', '/deps/BuildConf/{{ buildConf.id }}/dep_tree/view');
+       activateTab(tabId);
+    };
+
+    $(document).ready(function(){
+  // Initialize the tree
+  $('#tree').fancytree({
+
+<!--  https://wwwendt.de/tech/fancytree/demo/#sample-ext-filter.html -->
+    extensions: ["filter"],
+    quicksearch: true, // Enable quick search
+    filter: {
+        autoApply: true,   // Re-apply last filter if lazy data is loaded
+        autoExpand: true, // Expand all branches that contain matches while filtered
+        counter: true,     // Show a badge with number of matching child nodes near parent icons
+        fuzzy: false,      // Match single characters in order, e.g. 'fb' will match 'FooBar'
+        hideExpandedCounter: true,  // Hide counter badge if parent is expanded
+        hideExpanders: false,       // Hide expanders if all child nodes are hidden by filter
+        highlight: true,   // Highlight matches by wrapping inside <mark> tags
+        leavesOnly: false, // Match end nodes only
+        nodata: true,      // Display a 'no data' status node if result is empty
+        mode: "hide"       // Grayout unmatched nodes (pass "hide" to remove unmatched node instead)
+      },
+
+    source: [
+       {{ buildConfDepTree | safe }}
+       ],
+    });
+
+    var tree = $.ui.fancytree.getTree("#tree");
+
+    /*
+     * Event handlers for our little demo interface
+     */
+    $("input[name=search]").on("keyup", function(e){
+      var n,
+        tree = $.ui.fancytree.getTree(),
+        args = "autoApply autoExpand fuzzy hideExpanders highlight leavesOnly nodata".split(" "),
+        opts = {},
+        filterFunc = $("#branchMode").is(":checked") ? tree.filterBranches : tree.filterNodes,
+        match = $(this).val();
+
+      $.each(args, function(i, o) {
+        opts[o] = $("#" + o).is(":checked");
+      });
+      opts.mode = $("#hideMode").is(":checked") ? "hide" : "dimm";
+
+      if(e && e.which === $.ui.keyCode.ESCAPE || $.trim(match) === ""){
+        $("button#btnResetSearch").trigger("click");
+        return;
+      }
+      if($("#regex").is(":checked")) {
+        // Pass function to perform match
+        n = filterFunc.call(tree, function(node) {
+          return new RegExp(match, "i").test(node.title);
+        }, opts);
+      } else {
+        // Pass a string to perform case insensitive matching
+        n = filterFunc.call(tree, match, opts);
+      }
+      $("button#btnResetSearch").attr("disabled", false);
+      $("span#matches").text("(" + n + " matches)");
+    }).focus();
+
+    $("button#btnResetSearch").click(function(e){
+      $("input[name=search]").val("");
+      $("span#matches").text("");
+      tree.clearFilter();
+    }).attr("disabled", true);
+
+    $("fieldset input:checkbox").change(function(e){
+        var id = $(this).attr("id"),
+          flag = $(this).is(":checked");
+
+        // Some options can only be set with general filter options (not method args):
+        switch( id ){
+        case "counter":
+        case "hideExpandedCounter":
+          tree.options.filter[id] = flag;
+          break;
+        }
+        tree.clearFilter();
+        $("input[name=search]").keyup();
+    });
+
+  });
+
+</script>
+{% endblock %}

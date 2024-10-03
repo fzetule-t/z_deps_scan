@@ -1,0 +1,143 @@
+{% extends 'deps/base.html' %}
+
+{% load action_forms %}
+{% load custom_filters %}
+{% load static %}
+
+{% block head %}
+{% endblock %}
+
+{% block title %}Build conf List{% endblock %}
+{% block content %}
+{% csrf_token %}
+
+{% if buildConfList %}
+<table>
+    <tbody>
+    <tr>
+        <td>for Selected:</td>
+        <td>
+<!--            <button type="button" onclick="submitSelected('/deps/BuildConf/dep_list/extract', 'buildConfIds', '/deps/BuildConf/list')">-->
+<!--                Extract dep list-->
+<!--            </button>-->
+        </td>
+        <td>
+            <button type="button" onclick="submitSelected('/deps/BuildConf/dep_list/compare', 'buildConfIds', '/deps/BuildConfComparison/list')">
+                Init dependencies comparison
+            </button>
+        </td>
+        <td>
+<!--            <button type="button" onclick="submitSelected('/deps/BuildConf/dep_tree/extract', 'buildConfIds', '/deps/BuildConf/list')">-->
+<!--                Extract dep tree-->
+<!--            </button>-->
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<table id='table_1'>
+    <thead>
+    <tr>
+        <th></th>
+        <th>id</th>
+        <th>repo</th>
+        <th>buildConf</th>
+        <th class="noFilter noSort"></th>
+
+        <th class="noFilter noSort"></th>
+        <th>dep list start</th>
+        <th>dep list end</th>
+        <th>status</th>
+        <th class="noFilter noSort"></th>
+        <th class="noFilter noSort"></th>
+
+        <th class="noFilter noSort"></th>
+        <th>dep tree start</th>
+        <th>dep tree end</th>
+        <th>status</th>
+        <th class="noFilter noSort"></th>
+        <th class="noFilter noSort"></th>
+
+        <th class="noFilter noSort"></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% autoescape off %}
+    {% for buildConf in buildConfList %}
+    <tr>
+        <td><input type="checkbox" name="buildConfIds" value="{{ buildConf.id }}"/></td>
+        <td>{{buildConf.id}}</td>
+        <td>{% goToRepo buildConf.repo %}: {{buildConf.repo.name}} ({{buildConf.repo.identifier_type}}/{{buildConf.repo.identifier}})</td>
+        <td>{{ buildConf.filePath }}</td>
+        <td>{% goToGitForBuildConf buildConf %}</td>
+        <td> {% button_post buildConf 'dep_list/extract' '/deps/BuildConf/list' 'List dependencies' buildConf.dep_list_extract_status 'list.png' %}</td>
+        <td>{{ buildConf.dep_list_extract_start_dt | dtf }}</td>
+        <td>{{ buildConf.dep_list_extract_end_dt | dtf }}</td>
+        <td>
+            {{ buildConf.dep_list_extract_status | status | safe }}
+        <td>
+            {% if buildConf.dep_list_extract_status != TaskStatus.NONE_DONE %}
+            {% getLog buildConf 'dep_list/log' %}
+            {% endif %}
+        </td>
+        <td>
+            {% if buildConf.dep_list_extract_status == TaskStatus.OK %}
+            {% getJson buildConf 'dep_list/json' %}
+            {% goToView buildConf 'dep_list/view' %}
+            {% endif %}
+        </td>
+        <td>{% button_post buildConf 'dep_tree/extract' '/deps/BuildConf/list' 'Get dependencies tree' buildConf.dep_tree_extract_status 'tree.png' %}</td>
+        <td>{{ buildConf.dep_tree_extract_start_dt | dtf }}</td>
+        <td>{{ buildConf.dep_tree_extract_end_dt | dtf }}</td>
+
+        <td>
+            {{ buildConf.dep_tree_extract_status | status | safe }}
+        <td>
+            {% if buildConf.dep_tree_extract_status != TaskStatus.NONE_DONE %}
+            {% getLog buildConf 'dep_tree/log' %}
+            {% endif %}
+        </td>
+        <td>
+        {% if buildConf.dep_tree_extract_status == TaskStatus.OK %}
+            {% getJson buildConf 'dep_tree/json' %}
+            {% goToView buildConf 'dep_tree/view' %}
+            {% endif %}
+        </td>
+        <td>
+        {% button_delete buildConf 'delete' '/deps/BuildConf/list' TaskStatus.OK %}</td>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    {% endautoescape %}
+</table>
+{% else %}
+<tr>No buildConf are available.</tr>
+{% endif %}
+
+<script>
+    window.onload = function() {
+        activateTab('tab_build_conf');
+        var dataTable = transformToDataTable('table_1');
+        {% if repoFilter %}
+        $('#table_1 input').eq(2).val('{{repoFilter}}:').trigger($.Event("keyup", { keyCode: 13 }));
+        {% endif %}
+        {% if buildConfFilter %}
+        $('#table_1 input').eq(1).val('{{buildConfFilter}}').trigger($.Event("keyup", { keyCode: 13 }));
+        {% endif %}
+    };
+
+    // Automatically focus on first input when th is clicked
+    document.querySelectorAll('#table_1 th').forEach(th => {
+        th.tabIndex = -1; // Set th element itself as not focusable
+
+        // Event listener for click on th to focus on first input
+<!--        th.addEventListener('click', function() {-->
+<!--            let input = th.querySelector('input');-->
+<!--            if (input) {-->
+<!--                input.focus();-->
+<!--            }-->
+<!--        });-->
+    });
+</script>
+{% endblock %}

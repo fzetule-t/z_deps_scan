@@ -1,0 +1,69 @@
+{% extends 'deps/base.html' %}
+
+{% load action_forms %}
+{% load custom_filters %}
+{% load static %}
+
+
+{% block title %}Credits{% endblock %}
+
+{% block content %}
+
+Credits
+
+<h1>Icons</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Icon</th>
+        <th>Author</th>
+        <th>Link</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>{% getLabel '' 'json_file.png' '' %}</td>
+        <td>Icône de Smashicons</td>
+        <td>
+            https://fr.freepik.com/icone/fichier-json_136525#fromView=keyword&page=1&position=0&uuid=065b5f95-697d-44a2-9412-b969e6fd1cf0
+        </td>
+    </tr>
+    <tr>
+        <td>{% getLabel '' 'log_file.png' '' %}</td>
+        <td>Icône de The Chohans</td>
+        <td>
+            https://fr.freepik.com/icone/fichier-journal_9682754#fromView=search&page=1&position=6&uuid=a5f9cbf5-31a8-4d19-8375-dfb13284161b
+        </td>
+    </tr>
+    <tr>
+        <td>{% getLabel '' 'buildConf.png' '' %}</td>
+        <td>Icon by JunGSa</td>
+        <td>
+            https://www.freepik.com/icon/settings_2744604#fromView=search&page=1&position=7&uuid=97b00821-0ccd-445a-93a6-1e97caa7ba4a
+        </td>
+    </tr>
+    <tr>
+        <td>{% getLabel '' 'buildConf.png' '' %}</td>
+        <td>Icon by riajulislam</td>
+        <td>
+            https://www.freepik.com/icon/delete_12319540#fromView=search&page=1&position=20&uuid=100f5115-e41f-4a5d-a4a1-45977b0dcfc1
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Liste icônes créées par Smashicons - Flaticon</td>
+        <td>
+            https://www.flaticon.com/fr/icones-gratuites/liste
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+
+<script>
+    window.onload = function() {
+        activateTab('tab_credits');
+    };
+</script>
+
+{% endblock %}

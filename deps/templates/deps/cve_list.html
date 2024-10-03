@@ -1,0 +1,71 @@
+{% extends 'deps/base.html' %}
+
+{% load action_forms %}
+{% load custom_filters %}
+{% load static %}
+
+{% block head %}
+{% endblock %}
+
+{% block title %}Repo dependencies list{% endblock %}
+{% block content %}
+
+<br>
+CVE detected
+<br><br>
+{% if depList %}
+<table id='table_1'>
+    <thead>
+    <tr>
+        <th></th>
+        <th>Id</th>
+        <th>SCORE</th>
+        <th>Repo</th>
+        <th>Build conf</th>
+        <td>Dep group</td>
+        <td>Dep artifact</td>
+<!--        <td>Dep packaging</td>-->
+        <td>Dep classifier</td>
+        <td>Dep version</td>
+    </tr>
+    </thead>
+    <tbody>
+    {% for dep in depList %}
+    {% for cve in dep.cve_list.all %}
+    <tr>
+        <td><input type="checkbox" name="cveIds" value="{{ cve.id }}"/></td>
+        <td><a href="{{ cve.reference }}" target="_blank">{{ cve.id }}</a></td>
+        <td><span class="score" data-score="{{ cve.cvssScore }}">{{ cve.cvssScore }}</span></td>
+        <td>{% goToRepo dep.buildConf.repo %}</td>
+        <td>{% goToBuildConf dep.buildConf %}</td>
+        <td>{{ dep.group }}</td>
+        <td>{% linkToMavenRepoArtifactDep dep %} {{ dep.artifact }}</td>
+<!--        <td>{{ dep.packaging }}</td>-->
+        <td>{{ dep.classifier }}</td>
+        <td>{% linkToMavenRepoVersionDep dep %} {{ dep.version }}</td>
+    </tr>
+    {% endfor %}
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<tr>No CVEs detected yet.</tr>
+{% endif %}
+
+<script>
+    // Call the function after the template is loaded
+    window.onload = function() {
+        activateTab('tab_cve');
+        transformToDataTable('table_1');
+    };
+    document.addEventListener('DOMContentLoaded', function () {
+        const scoreElements = document.querySelectorAll('.score');
+        scoreElements.forEach(function (scoreElement) {
+        const score = parseFloat(scoreElement.getAttribute('data-score'));
+        const scoreColor = getScoreColor(score);
+        scoreElement.style.color = scoreColor;
+        });
+    });
+</script>
+{% endblock %}
+

@@ -1,0 +1,66 @@
+{% extends 'deps/base.html' %}
+
+{% load action_forms %}
+{% load custom_filters %}
+{% load static %}
+
+{% block head %}
+{% endblock %}
+
+{% block title %}Dependencies comparisons{% endblock %}
+{% block content %}
+{% if buildConfComparisonList %}
+<table id="table_1">
+    <thead>
+    <tr>
+        <th></th>
+        <th>id</th>
+        <th>Repo / Build Conf</th>
+        <th class="noFilter noSort"></th>
+        <!--        <th>Created</th>-->
+        <th>Last started</th>
+        <th>Last ended</th>
+        <th>Last Status</th>
+        <th class="noFilter noSort"></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% autoescape off %}
+    {% for comparison in buildConfComparisonList %}
+    <tr>
+        <td><input type="checkbox" name="buildConfComparison_ids" value="{{ buildConfComparison.id }}"></td>
+        <td>
+            {{ comparison.id }}
+        </td>
+            {% autoescape off %}
+        <td> {% button_post comparison 'start' '/deps/BuildConfComparison/list' %} </td>
+            {% endautoescape %}
+        <td>{% comparisonToHtml comparison %}</td>
+        <!--        <td>{{ comparison.created_dt | dtf }}</td>-->
+        <td>{{ comparison.start_dt | dtf }}</td>
+        <td>{{ comparison.end_dt | dtf }}</td>
+        <td>{{ comparison.status | status | safe }}
+            {% if comparison.status == TaskStatus.OK %}
+            {% getJson comparison 'result/json' %}
+            {% goToView comparison 'result/view' %}
+            {% endif %}</td>
+        <td> {% button_delete comparison 'delete' '/deps/BuildConfComparison/list' %} </td>
+    </tr>
+    {% endfor %}
+    {% endautoescape %}
+    </tbody>
+</table>
+{% else %}
+<tr>No comparison are available.</tr>
+{% endif %}
+
+<script>
+
+    // Call the function after the template is loaded
+    window.onload = function() {
+        activateTab('tab_build_conf_comparison')
+        transformToDataTable('table_1');
+    };
+</script>
+{% endblock %}
+

@@ -1,0 +1,5 @@
+
+check latest jquery
+check latest dataTables
+<!--    https://cdn.datatables.net/v/dt/dt-1.13.8/b-2.4.2/b-colvis-2.4.2/fc-4.3.0/fh-3.4.0/kt-2.11.0/r-2.5.0/datatables.min.css -->
+<!--    https://cdn.datatables.net/v/dt/dt-1.13.8/b-2.4.2/b-colvis-2.4.2/fc-4.3.0/fh-3.4.0/kt-2.11.0/r-2.5.0/datatables.min.js-->
