@@ -67,6 +67,7 @@
             <tbody>
             <tr>
                 <td>{% getGeneralLog %}</td>
+                <td>{% goToAdmin %}</td>
                 <td>{% goToCredits %}</td>
                 <td>{% if user.is_authenticated %}
                     <form action="{% url 'logout' %}" method="post">

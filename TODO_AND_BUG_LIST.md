@@ -32,7 +32,6 @@ Incomplete dependency tree, can use below code:
 
 Maven is not thread safe
 
-
 # Docker:
  - no root user
  - secu files access (app, data & DB)

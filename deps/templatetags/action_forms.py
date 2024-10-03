@@ -34,12 +34,26 @@ def linkToMavenRepoVersion(group, artifact, version):
 
 @register.simple_tag
 def linkToMavenRepoArtifactDep(dep):
-    return linkToMavenRepoArtifact(dep['group'], dep['artifact'])
+    if isinstance(dep, dict):
+        group = dep.get('group')
+        artifact = dep.get('artifact')
+    else:
+        group = getattr(dep, 'group', None)
+        artifact = getattr(dep, 'artifact', None)
+    return linkToMavenRepoArtifact(group, artifact)
 
 
 @register.simple_tag
 def linkToMavenRepoVersionDep(dep):
-    return linkToMavenRepoVersion(dep['group'], dep['artifact'], dep['version'])
+    if isinstance(dep, dict):
+        group = dep.get('group')
+        artifact = dep.get('artifact')
+        version = dep.get('version')
+    else:
+        group = getattr(dep, 'group', None)
+        artifact = getattr(dep, 'artifact', None)
+        version = getattr(dep, 'version', None)
+    return linkToMavenRepoVersion(group, artifact, version)
 
 
 @register.simple_tag
@@ -239,6 +253,12 @@ def comparisonToHtml(comparison: BuildConfComparison):
         for buildConf in buildConfListPerRepo:
             html += f'<br> - BuildConf {goToBuildConf(buildConf)}: {buildConf.filePath} (Dep List {buildConf.dep_list_extract_status} {dtf(buildConf.dep_list_extract_end_dt)})'
     return mark_safe(html)
+
+
+@register.simple_tag
+def goToAdmin():
+    url = f'/admin'
+    return getLink('Go to admin', url, '', 'Admin')
 
 
 @register.simple_tag
