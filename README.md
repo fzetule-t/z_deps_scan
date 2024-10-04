@@ -225,7 +225,7 @@ Common Gradle Configurations and Their Maven Equivalents:
         Usage: Less common, used when compile-only dependencies are needed in dependent projects.
 
 ## Gradle to Maven Scope Mapping:
-
+```
    compileClasspath (Gradle) ↔ compile (Maven)
    runtimeClasspath (Gradle) ↔ runtime (Maven)
    compileOnly (Gradle) ↔ provided (Maven)
@@ -234,3 +234,4 @@ Common Gradle Configurations and Their Maven Equivalents:
    testRuntimeClasspath (Gradle) ↔ test (Maven)
    implementation (Gradle) ↔ compile (Maven)
    api (Gradle) ↔ compile (Maven) with transitivity
+```
