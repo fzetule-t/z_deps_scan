@@ -3,7 +3,7 @@
 Tool to analyse dependencies of Maven and Gradle Projects.
 
 Can:
-- compare dependency list between multiple build configurations.
+- compare dependency list between multiple build configurations
 - gather latest version available from maven central repo https://mvnrepository.com
 - gather attached CVEs from OSS Index https://ossindex.sonatype.org/
 - parse dependency tree to ease browsing it
@@ -164,15 +164,15 @@ Differences between dependency:tree and dependency:list
 
 ## Gradle
 
-Gradle https://docs.gradle.org/current/userguide/viewing_debugging_dependencies.html
-(n) - A dependency or dependency configuration that cannot be resolved
-(c) - A dependency constraint, not a dependency. The dependency affected by the constraint occurs elsewhere in the tree.
-(*) - Indicates repeated occurrences of a transitive dependency subtree. Gradle expands transitive dependency subtrees
-only once per project; repeat occurrences only display the root of the subtree, followed by this annotation.
+Gradle https://docs.gradle.org/current/userguide/viewing_debugging_dependencies.html  
+(n) - A dependency or dependency configuration that cannot be resolved  
+(c) - A dependency constraint, not a dependency. The dependency affected by the constraint occurs elsewhere in the tree.  
+(*) - Indicates repeated occurrences of a transitive dependency subtree. Gradle expands transitive dependency subtrees  
+only once per project; repeat occurrences only display the root of the subtree, followed by this annotation.  
 
-In Gradle, configurations can be mapped to existing classifiers in Maven projects to understand how dependencies are
-categorized and resolved. Here’s a mapping of Gradle configurations to their typical counterparts in Maven projects:
-Common Gradle Configurations and Their Maven Equivalents:
+In Gradle, configurations can be mapped to existing classifiers in Maven projects to understand how dependencies are  
+categorized and resolved. Here’s a mapping of Gradle configurations to their typical counterparts in Maven projects:  
+Common Gradle Configurations and Their Maven Equivalents:  
 
     compileClasspath:
         Gradle: Used to compile the main source set.
