@@ -20,7 +20,7 @@ Known limitations:
 
 ### Locally
 
-Fill or provide environment variables in `z_deps_scan/.env_(unix/win)`
+Fill or provide environment variables in `z_deps_scan/.env`
 
 Make sure to install all necessary python package.
 
