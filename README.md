@@ -20,15 +20,15 @@ Known limitations:
 
 ### Locally
 
-Fill or provide environment variables in `z_deps_scan/.env`
+Fill or provide environment variables in `z_deps_scan/.env_(unix/win)`
 
 Make sure to install all necessary python package.
 
-On project root directory launch:  
-```python manage.py createsuperuser```
-
 To create/update database:  
 ```./manage.py migrate```
+
+On project root directory launch:  
+```python manage.py createsuperuser```
 
 Launch with:  
 ```./manage.py runserver```
